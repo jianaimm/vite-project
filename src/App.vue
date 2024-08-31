@@ -1,18 +1,23 @@
-<script setup lang="ts">
-
-
-</script>
-
 <template>
   <div class="app">
+    <!-- 顶部 -->
     <HospitalTop />
+    <!-- 内容 -->
     <div class="content">
       <router-view></router-view>
     </div>
-   
+   <!-- 底部 -->
     <HospitalBottom />
+    <!-- 登录组件 -->
+     <Login />
   </div>
 </template>
+
+<script setup lang="ts">
+
+
+
+</script>
 
 <style scoped>
 .app {

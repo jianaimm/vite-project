@@ -27,22 +27,57 @@
         <div class="depart">
             <div class="left">
                 <ul>
-                    <li v-for="item in hospitalStore.departArr" :key="item.depcode">{{ item.depname }}</li>
+                    <li 
+                    v-for="(item,index) in hospitalStore.departArr"
+                     :key="item.depcode"
+                     :class="{active: currentIndex === index}"
+                     @click="handleClick(index)"
+                     >{{ item.depname }}</li>
                 </ul>
             </div>
-            <div class="right">
-
-            </div>
+            <ul class="right">
+                <li v-for="(item,index) in hospitalStore.departArr" :key="item.depcode" class="right-item">
+                    <h1 class="dep-title">{{ item.depname }}</h1>
+                    <ul class="child-wrap">
+                        <li 
+                        v-for="child in item.children"
+                         :key="child.depcode"
+                         @click="showLogin"
+                         >{{ child.depname }}</li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import useDetailStore from '@/store/modules/hospitalDetail';
+import { ref } from 'vue'
+import useUserStore from '@/store/modules/user';
+
+let userStore = useUserStore();
+
+let currentIndex = ref<number>(0)
 
 let hospitalStore = useDetailStore();
-\
 
+const handleClick = (index: number) => {
+    currentIndex.value = index;
+    let allH1 = document.getElementsByClassName('dep-title');
+    // let allH = document.querySelectorAll('.dep-title');
+
+    // 点击左侧科室时，右侧滚动到对应科室的位置
+    allH1[index].scrollIntoView({
+        behavior: 'smooth', // 滚动动画效果
+        // block: 'center' // 滚动到父容器的位置，默认顶部
+    })
+    
+}
+// 点击科室，如果未登录，显示登录弹窗
+const showLogin = () => {
+    userStore.loginVisible = true;
+}
 
 </script>
 
@@ -98,12 +133,42 @@ let hospitalStore = useDetailStore();
                     text-align: center;
                     color: #7f7f7f;
                     font-size: 14px;
+                    line-height: 40px;
+                    cursor: pointer;
+                    &.active {
+                        border-left: 1px solid red;
+                        background-color: #fff;
+                        color: red;
+                    }
                 }
             }
         }
         .right {
             flex: 1;
             margin-left: 20px;
+            height: 100%;
+            overflow: auto;
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            .right-item {
+                h1 {
+                    background-color: rgb(248,248,248);
+                    color: #7f7f7f;
+                    line-height: 30px;
+                }
+                .child-wrap {
+                    display: flex;
+                    flex-wrap: wrap;
+                    li {
+                        width: 33%;
+                        color: #7f7f7f;
+                        line-height: 30px;
+                        cursor: pointer;
+                    }
+                }
+            }
+            
         }
     }
 }
